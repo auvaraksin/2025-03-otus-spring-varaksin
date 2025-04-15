@@ -16,12 +16,15 @@
         <constructor-arg name="testFileName" value="questions.csv"/>
     </bean>
 
+    <bean id="questionOutputViewService" class="ru.otus.hw.service.QuestionConsoleOutput"/>
+
     <bean id="questionDao" class="ru.otus.hw.dao.CsvQuestionDao">
         <constructor-arg name="fileNameProvider" ref="testFileNameProvider"/>
     </bean>
 
     <bean id="testService" class="ru.otus.hw.service.TestServiceImpl">
         <constructor-arg name="ioService" ref="ioService"/>
+        <constructor-arg name="questionOutputViewService" ref="questionOutputViewService"/>
         <constructor-arg name="questionDao" ref="questionDao"/>
     </bean>
 

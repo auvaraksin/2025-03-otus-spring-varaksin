@@ -22,8 +22,8 @@ public class CsvQuestionDao implements QuestionDao {
     @Override
     public List<Question> findAll() {
 
-        List<QuestionDto> questionDtoList;
         List<Question> questionList = new ArrayList<>();
+        List<QuestionDto> questionDtoList;
         try {
             File file = getFileFromResource(fileNameProvider);
             FileReader fileReader = new FileReader(file);
@@ -33,10 +33,10 @@ public class CsvQuestionDao implements QuestionDao {
                     .withType(QuestionDto.class)
                     .build()
                     .parse();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
         } catch (FileNotFoundException e) {
             throw new QuestionReadException("<=====File " + fileNameProvider.getTestFileName() + " not found=====>");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         }
 
         for (QuestionDto questionDto: questionDtoList) {
@@ -52,7 +52,7 @@ public class CsvQuestionDao implements QuestionDao {
         ClassLoader classLoader = getClass().getClassLoader();
         URL resource = classLoader.getResource(fileName);
         if (resource == null) {
-            throw new IllegalArgumentException("<=====File " + fileName + " not found=====>");
+            throw new IllegalArgumentException("<=====File " + fileNameProvider.getTestFileName() + " not found=====>");
         } else {
             return new File(resource.toURI());
         }

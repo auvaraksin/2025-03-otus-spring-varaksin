@@ -2,14 +2,13 @@ package ru.otus.hw.service;
 
 import lombok.RequiredArgsConstructor;
 import ru.otus.hw.dao.QuestionDao;
-import ru.otus.hw.domain.Question;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
 
     private final IOService ioService;
+
+    private final QuestionOutputViewService questionOutputViewService;
 
     private final QuestionDao questionDao;
 
@@ -20,17 +19,6 @@ public class TestServiceImpl implements TestService {
 
         var questions = questionDao.findAll();
 
-        printQuestionList(questions);
-    }
-
-    private void printQuestionList(List<Question> questionList) {
-        for (Question question: questionList) {
-            System.out.println("<=====Question=====>");
-            System.out.println(question.text());
-            System.out.println("<-----Answers----->");
-            question.answers().forEach(System.out::println);
-            System.out.println("<-----End of question----->");
-            System.out.println();
-        }
+        questionOutputViewService.printQuestionList(questions);
     }
 }

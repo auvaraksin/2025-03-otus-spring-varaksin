@@ -2,3 +2,14 @@
 Is there life on Mars?;Science doesn't know this yet%true|Certainly. The red UFO is from Mars. And green is from Venus%false|Absolutely not%false
 How should resources be loaded from jar in Java?;ClassLoader#geResourceAsStream or ClassPathResource#getInputStream%true|ClassLoader#geResource#getFile + FileReader%false|Wingardium Leviosa%false
 Which option is a good way to handle the exception?;@SneakyThrow%false|e.printStackTrace()%false|Rethrow with wrapping in business exception (for example, QuestionReadException)%true|Ignoring exception%false
+Which data type is used to create a variable that should store text?;string%false|myString%false|Txt%false|String%true
+Which method can be used to find the length of a string?;len()%false|length()%true|getLength()%false|getSize()%false
+Which method can be used to return a string in upper case letters?;touppercase()%false|upperCase()%false|tuc()%false|toUpperCase()%true
+Which operator can be used to compare two values?;==%true|><%false|=%false|<>%false
+How do you create a method in Java?;methodName.%false|methodName()%true|methodName[]%false|(methodName)%false
+Which keyword is used to create a class in Java?;class%true|class()%false|MyClass%false|className%false
+Which method can be used to find the highest value of x and y?;Math.largest(x,y)%false|Math.maxNum(x,y)%false|Math.max(x,y)%true|Math.maximum(x,y)%false
+Which keyword is used to import a package from the Java API library?;getlib%false|lib%false|package%false|import%true
+How do you start writing a while loop in Java?;while x>y:%false|while (x>y)%true|while x>y {%false|x>y while {%false
+Which keyword is used to return a value inside a method?;return%true|break%false|void%false|get%false
+Which statement is used to stop a loop?;stop%false|return%false|break%true|exit%false
