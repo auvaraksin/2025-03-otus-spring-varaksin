@@ -33,8 +33,8 @@ public class TestServiceImpl implements TestService {
             var answer = ioService.readIntForRangeWithPrompt(
                     1,
                     question.answers().size(),
-                    "Введите номер варианта ответа",
-                    "Введен некорректный вариант ответа. Введите число в диапазоне от 1 до " + question.answers().size()
+                    "Enter the number of the answer option",
+                    "You entered an incorrect answer option. Enter a number between 1 and " + question.answers().size()
             );
             var isAnswerValid = question.answers().get(answer - 1).isCorrect();
             testResult.applyAnswer(question, isAnswerValid);
