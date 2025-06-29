@@ -2,3 +2,14 @@
 Есть ли жизнь на Марсе?;Это науке пока не известно%true|Конечно. Красные (НЛО) это с Марса. А зеленые (НЛО) с Венеры%false|Точно нет%false
 Как нужно загружать ресурс из jar в Java?;ClassLoader#geResourceAsStream или ClassPathResource#getInputStream%true|ClassLoader#geResource#getFile + FileReader%false|Wingardium Leviosa%false
 Какой предпочтительный способ реакции на исключения?;@SneakyThrow%false|e.printStackTrace()%false|Проброс дальше с предварительным оборачиванием в бизнес-исключение (например, QuestionReadException)%true|Игнорирование исключения%false
+Какой тип данных используется для создания переменной, которая должна хранить текст?;string%false|myString%false|Txt%false|String%true
+Какой метод использовать для определения длины строки?;len()%false|length()%true|getLength()%false|getSize()%false
+Какой метод использовать для возврата строки, состоящей из заглавных букв?;touppercase()%false|upperCase()%false|tuc()%false|toUpperCase()%true
+Какой оператор использовать для сравнения двух значений?;==%true|><%false|=%false|<>%false
+Как создать метод в Java?;methodName.%false|methodName()%true|methodName[]%false|(methodName)%false
+Какое ключевое слово используется для создания класса в Java?;class%true|class()%false|MyClass%false|className%false
+Какой метод использовать для нахождения наибольшего значения x и y?;Math.largest(x,y)%false|Math.maxNum(x,y)%false|Math.max(x,y)%true|Math.maximum(x,y)%false
+Какое ключевое слово используется для импорта пакета из библиотеки Java API?;getlib%false|lib%false|package%false|import%true
+Как начать писать цикл while на Java?;while x>y:%false|while (x>y)%true|while x>y {%false|x>y while {%false
+Какое ключевое слово используется для возврата значения внутри метода?;return%true|break%false|void%false|get%false
+Какой оператор используется для остановки цикла?;stop%false|return%false|break%true|exit%false
