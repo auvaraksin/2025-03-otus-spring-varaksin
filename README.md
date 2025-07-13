@@ -14,7 +14,7 @@
 - [HW-01. XML-config.](#hw01)
 - [HW-02. Annotation-config.](#hw02)
 - [HW-03. Spring-boot.](#hw03)
-- [HW-04. Spring-shell.](#hw03)
+- [HW-04. Spring-shell.](#hw04)
 
 ---
 
