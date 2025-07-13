@@ -1,9 +1,10 @@
 package ru.otus.hw.dao;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ru.otus.hw.config.TestFileNameProvider;
 import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
@@ -17,16 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = CsvQuestionDao.class)
 public class CsvQuestionDaoTest {
 
+    @MockitoBean
     private TestFileNameProvider fileNameProvider;
-    private CsvQuestionDao csvQuestionDao;
 
-    @BeforeEach
-    void setUp() {
-        fileNameProvider = Mockito.mock(TestFileNameProvider.class);
-        csvQuestionDao = new CsvQuestionDao(fileNameProvider);
-    }
+    @Autowired
+    private CsvQuestionDao csvQuestionDao;
 
     @Test
     @DisplayName("Должен корректно загружать вопросы из CSV-файла")
