@@ -1,0 +1,3 @@
+text;answers
+Is this a test question?;Yes%true|No%false
+Another test question?;Option 1%false|Option 2%true|Option 3%false
