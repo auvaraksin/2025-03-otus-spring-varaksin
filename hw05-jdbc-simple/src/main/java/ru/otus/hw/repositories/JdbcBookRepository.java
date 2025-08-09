@@ -1,27 +1,52 @@
 package ru.otus.hw.repositories;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.otus.hw.exceptions.EntityNotFoundException;
+import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
+import ru.otus.hw.models.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class JdbcBookRepository implements BookRepository {
+
+    private final NamedParameterJdbcTemplate jdbc;
 
     @Override
     public Optional<Book> findById(long id) {
-        return Optional.empty();
+        List<Book> books = jdbc.query(
+                "SELECT b.id, b.title, a.id as author_id, a.full_name, g.id as genre_id, g.name " +
+                        "FROM books b " +
+                        "JOIN authors a ON b.author_id = a.id " +
+                        "JOIN genres g ON b.genre_id = g.id " +
+                        "WHERE b.id = :id",
+                Map.of("id", id),
+                new BookRowMapper()
+        );
+        return Optional.ofNullable(DataAccessUtils.uniqueResult(books));
     }
 
     @Override
     public List<Book> findAll() {
-        return new ArrayList<>();
+        return jdbc.query(
+                "SELECT b.id, b.title, a.id as author_id, a.full_name, g.id as genre_id, g.name " +
+                        "FROM books b " +
+                        "JOIN authors a ON b.author_id = a.id " +
+                        "JOIN genres g ON b.genre_id = g.id",
+                new BookRowMapper()
+        );
     }
 
     @Override
@@ -34,22 +59,45 @@ public class JdbcBookRepository implements BookRepository {
 
     @Override
     public void deleteById(long id) {
-        //...
+        jdbc.update(
+                "DELETE FROM books WHERE id = :id",
+                Map.of("id", id)
+        );
     }
 
     private Book insert(Book book) {
         var keyHolder = new GeneratedKeyHolder();
 
-        //...
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("title", book.getTitle())
+                .addValue("author_id", book.getAuthor().getId())
+                .addValue("genre_id", book.getGenre().getId());
 
-        //noinspection DataFlowIssue
+        jdbc.update(
+                "INSERT INTO books (title, author_id, genre_id) VALUES (:title, :author_id, :genre_id)",
+                params,
+                keyHolder,
+                new String[]{"id"}
+        );
+
         book.setId(keyHolder.getKeyAs(Long.class));
         return book;
     }
 
     private Book update(Book book) {
-        //...
-        // Выбросить EntityNotFoundException если не обновлено ни одной записи в БД
+        int updated = jdbc.update(
+                "UPDATE books SET title = :title, author_id = :author_id, genre_id = :genre_id WHERE id = :id",
+                Map.of(
+                        "id", book.getId(),
+                        "title", book.getTitle(),
+                        "author_id", book.getAuthor().getId(),
+                        "genre_id", book.getGenre().getId()
+                )
+        );
+
+        if (updated == 0) {
+            throw new EntityNotFoundException("Book with id %d not found".formatted(book.getId()));
+        }
         return book;
     }
 
@@ -57,7 +105,20 @@ public class JdbcBookRepository implements BookRepository {
 
         @Override
         public Book mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return null;
+            Author author = new Author(
+                    rs.getLong("author_id"),
+                    rs.getString("full_name")
+            );
+            Genre genre = new Genre(
+                    rs.getLong("genre_id"),
+                    rs.getString("name")
+            );
+            return new Book(
+                    rs.getLong("id"),
+                    rs.getString("title"),
+                    author,
+                    genre
+            );
         }
     }
 }
