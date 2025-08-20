@@ -16,6 +16,7 @@
 - [HW-03. Spring-boot.](#hw03)
 - [HW-04. Spring-shell.](#hw04)
 - [HW-05. Spring-jdbc.](#hw05)
+- [HW-06. Spring-ORM-JPA-Hibernate.](#hw06)
 
 ---
 
@@ -89,7 +90,7 @@
 Создание и инициализация схемы БД выполняются через schema.sql + data.sql.
 С помощью @JdbcTest разработаны интеграционные тесты всех методов DAO Author, Genre, Book.
 Управление в консоли приложения осуществляется через Spring Shell команды.
-Наименование и назначение shell-команд:
+#### Наименование и назначение команд Spring Shell для работы с авторами, жанрами и книгами:
 - "aa" : "Find all authors".
 	Example : "aa".
 	Result : "Id: 1, FullName: Author_1,
@@ -117,6 +118,47 @@
 - "bupd" : "Update book".
 	Example : "bupd 4 Pollyanna 1 1".
 	Result : "Id: 4, title: Pollyanna, author: {Id: 1, FullName: Author_1}, genres: [Id: 1, Name: Genre_1]".
+
+<br/>
+
+[[вернуться к содержанию]](#content)
+
+---
+<a name="hw06"></a>
+
+### HW-06. Spring-ORM-JPA-Hibernate.
+
+Приложение каталога книг переведено на использование Spring ORM, JPA и Hibernate (EntityManager).
+Дополнена доменная модель сущностью комментария к книге (один-ко-многим).
+
+#### Основные изменения:
+- Реализованы JPA-репозитории для всех сущностей (Author, Book, Genre, Comment)
+- Добавлена сущность Comment с отношением @ManyToOne к Book
+- Реализованы CRUD операции для комментариев:
+  - Поиск комментария по id
+  - Поиск всех комментариев по id книги
+  - Создание, обновление и удаление комментариев
+- Оптимизированы запросы для избежания проблем N+1:
+  - Использованы JOIN FETCH в запросах
+  - Lazy-инициализация для связей
+- Аннотация @Transactional перенесена на уровень сервисов
+- Написаны интеграционные тесты для всех репозиториев с использованием @DataJpaTest и TestEntityManager
+- Добавлены тесты сервисов, проверяющие отсутствие LazyInitializationException
+- DDL через Hibernate отключено, используется schema.sql
+
+#### Наименование и назначение команд Spring Shell для работы с комментариями:
+- "cbbid" : "Find all comments by book id".
+	Example: "cbbid 1".
+	Result: "Id: 1, Text: Comment_1, BookId: 1, Id: 2, Text: Comment_2, BookId: 1".
+- "cbid" : "Find comment by id".
+	Example: "cbid 1".
+	Result: "Id: 1, Text: Comment_1, BookId: 1".
+- "csave" : "Save comment (create or update)".
+	Example: "csave 1 New comment text".
+	Result: "Id: 4, Text: New comment text, BookId: 1".
+- "cdel" : "Delete comment by id".
+	Example: "cdel 4".
+	Result: "".
 
 <br/>
 
