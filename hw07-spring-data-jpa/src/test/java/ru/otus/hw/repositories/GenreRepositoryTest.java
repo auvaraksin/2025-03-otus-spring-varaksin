@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
 import ru.otus.hw.models.Genre;
 
 import java.util.List;
@@ -16,13 +15,12 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Репозиторий на основе Jdbc для работы с жанрами")
+@DisplayName("Репозиторий на основе Spring Data JPA для работы с жанрами")
 @DataJpaTest
-@Import(JpaGenreRepository.class)
-class JpaGenreRepositoryTest {
+class GenreRepositoryTest {
 
     @Autowired
-    private JpaGenreRepository repositoryJpa;
+    private GenreRepository repository;
 
     @Autowired
     private TestEntityManager em;
@@ -38,8 +36,9 @@ class JpaGenreRepositoryTest {
     @ParameterizedTest
     @MethodSource("getDbGenres")
     void shouldReturnCorrectGenreById(Genre expectedGenre) {
-        var actualGenre = repositoryJpa.findById(expectedGenre.getId());
+        var actualGenre = repository.findById(expectedGenre.getId());
         var emGenre = em.find(Genre.class, expectedGenre.getId());
+
         assertThat(actualGenre)
                 .isPresent()
                 .get()
@@ -50,7 +49,7 @@ class JpaGenreRepositoryTest {
     @DisplayName("должен загружать список всех жанров")
     @Test
     void shouldReturnCorrectGenresList() {
-        var actualGenres = repositoryJpa.findAll();
+        var actualGenres = repository.findAll();
         var expectedGenres = dbGenres;
 
         assertThat(actualGenres)
@@ -60,8 +59,6 @@ class JpaGenreRepositoryTest {
 
         assertThat(actualGenres)
                 .allMatch(genre -> em.find(Genre.class, genre.getId()) != null);
-
-        actualGenres.forEach(System.out::println);
     }
 
     private static List<Genre> getDbGenres() {

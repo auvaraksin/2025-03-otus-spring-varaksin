@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
@@ -18,13 +17,12 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Репозиторий на основе Jpa для работы с комментариями")
+@DisplayName("Репозиторий на основе Spring Data JPA для работы с комментариями")
 @DataJpaTest
-@Import({JpaCommentRepository.class, JpaBookRepository.class})
-class JpaCommentRepositoryTest {
+class CommentRepositoryTest {
 
     @Autowired
-    private JpaCommentRepository repositoryJpa;
+    private CommentRepository repository;
 
     @Autowired
     private TestEntityManager em;
@@ -40,8 +38,9 @@ class JpaCommentRepositoryTest {
     @ParameterizedTest
     @MethodSource("getDbComments")
     void shouldReturnCorrectCommentById(Comment expectedComment) {
-        var actualComment = repositoryJpa.findById(expectedComment.getId());
+        var actualComment = repository.findById(expectedComment.getId());
         var emComment = em.find(Comment.class, expectedComment.getId());
+
         assertThat(actualComment)
                 .isPresent()
                 .get()
@@ -52,7 +51,7 @@ class JpaCommentRepositoryTest {
     @DisplayName("должен загружать список всех комментариев по id книги")
     @Test
     void shouldReturnCorrectCommentsListByBookId() {
-        var actualComments = repositoryJpa.findAllByBookId(1L);
+        var actualComments = repository.findAllByBookId(1L);
 
         var expectedComment1 = em.find(Comment.class, 1L);
         var expectedComment2 = em.find(Comment.class, 2L);
@@ -72,13 +71,14 @@ class JpaCommentRepositoryTest {
     void shouldSaveNewComment() {
         var book = em.find(Book.class, 1L);
         var expectedComment = new Comment(0, "New Comment", book);
-        var returnedComment = repositoryJpa.save(expectedComment);
+
+        var returnedComment = repository.save(expectedComment);
 
         assertThat(returnedComment).isNotNull()
                 .matches(comment -> comment.getId() > 0)
                 .usingRecursiveComparison().ignoringExpectedNullFields().isEqualTo(expectedComment);
 
-        assertThat(repositoryJpa.findById(returnedComment.getId()))
+        assertThat(repository.findById(returnedComment.getId()))
                 .isPresent()
                 .get()
                 .isEqualTo(returnedComment);
@@ -90,17 +90,17 @@ class JpaCommentRepositoryTest {
         var book = em.find(Book.class, 2L);
         var expectedComment = new Comment(1L, "Updated Comment", book);
 
-        assertThat(repositoryJpa.findById(expectedComment.getId()))
+        assertThat(repository.findById(expectedComment.getId()))
                 .isPresent()
                 .get()
                 .isNotEqualTo(expectedComment);
 
-        var returnedComment = repositoryJpa.save(expectedComment);
+        var returnedComment = repository.save(expectedComment);
         assertThat(returnedComment).isNotNull()
                 .matches(comment -> comment.getId() > 0)
                 .usingRecursiveComparison().ignoringExpectedNullFields().isEqualTo(expectedComment);
 
-        assertThat(repositoryJpa.findById(returnedComment.getId()))
+        assertThat(repository.findById(returnedComment.getId()))
                 .isPresent()
                 .get()
                 .isEqualTo(returnedComment);
@@ -109,9 +109,9 @@ class JpaCommentRepositoryTest {
     @DisplayName("должен удалять комментарий по id")
     @Test
     void shouldDeleteComment() {
-        assertThat(repositoryJpa.findById(1L)).isPresent();
-        repositoryJpa.deleteById(1L);
-        assertThat(repositoryJpa.findById(1L)).isEmpty();
+        assertThat(repository.findById(1L)).isPresent();
+        repository.deleteById(1L);
+        assertThat(repository.findById(1L)).isEmpty();
     }
 
     private static List<Comment> getDbComments() {

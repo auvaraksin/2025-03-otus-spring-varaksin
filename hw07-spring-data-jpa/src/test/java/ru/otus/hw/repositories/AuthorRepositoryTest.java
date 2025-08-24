@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
 import ru.otus.hw.models.Author;
 
 import java.util.List;
@@ -16,13 +15,12 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Репозиторий на основе Jpa для работы с авторами")
+@DisplayName("Репозиторий на основе Spring Data JPA для работы с авторами")
 @DataJpaTest
-@Import(JpaAuthorRepository.class)
-class JpaAuthorRepositoryTest {
+class AuthorRepositoryTest {
 
     @Autowired
-    private JpaAuthorRepository repositoryJpa;
+    private AuthorRepository repository;
 
     @Autowired
     private TestEntityManager em;
@@ -38,8 +36,9 @@ class JpaAuthorRepositoryTest {
     @ParameterizedTest
     @MethodSource("getDbAuthors")
     void shouldReturnCorrectAuthorById(Author expectedAuthor) {
-        var actualAuthor = repositoryJpa.findById(expectedAuthor.getId());
+        var actualAuthor = repository.findById(expectedAuthor.getId());
         var emAuthor = em.find(Author.class, expectedAuthor.getId());
+
         assertThat(actualAuthor)
                 .isPresent()
                 .get()
@@ -50,7 +49,7 @@ class JpaAuthorRepositoryTest {
     @DisplayName("должен загружать список всех авторов")
     @Test
     void shouldReturnCorrectAuthorsList() {
-        var actualAuthors = repositoryJpa.findAll();
+        var actualAuthors = repository.findAll();
         var expectedAuthors = dbAuthors;
 
         assertThat(actualAuthors)
@@ -60,8 +59,6 @@ class JpaAuthorRepositoryTest {
 
         assertThat(actualAuthors)
                 .allMatch(author -> em.find(Author.class, author.getId()) != null);
-
-        actualAuthors.forEach(System.out::println);
     }
 
     private static List<Author> getDbAuthors() {

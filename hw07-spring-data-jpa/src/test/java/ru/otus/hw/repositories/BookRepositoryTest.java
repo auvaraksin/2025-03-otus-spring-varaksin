@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
@@ -18,21 +17,18 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Репозиторий на основе Jpa для работы с книгами")
+@DisplayName("Репозиторий на основе Spring Data JPA для работы с книгами")
 @DataJpaTest
-@Import({JpaBookRepository.class, JpaAuthorRepository.class, JpaGenreRepository.class})
-class JpaBookRepositoryTest {
+class BookRepositoryTest {
 
     @Autowired
-    private JpaBookRepository repositoryJpa;
+    private BookRepository repository;
 
     @Autowired
     private TestEntityManager em;
 
     private List<Author> dbAuthors;
-
     private List<Genre> dbGenres;
-
     private List<Book> dbBooks;
 
     @BeforeEach
@@ -46,8 +42,9 @@ class JpaBookRepositoryTest {
     @ParameterizedTest
     @MethodSource("getDbBooks")
     void shouldReturnCorrectBookById(Book expectedBook) {
-        var actualBook = repositoryJpa.findById(expectedBook.getId());
+        var actualBook = repository.findById(expectedBook.getId());
         var emBook = em.find(Book.class, expectedBook.getId());
+
         assertThat(actualBook)
                 .isPresent()
                 .get()
@@ -58,7 +55,7 @@ class JpaBookRepositoryTest {
     @DisplayName("должен загружать список всех книг")
     @Test
     void shouldReturnCorrectBooksList() {
-        var actualBooks = repositoryJpa.findAll();
+        var actualBooks = repository.findAll();
         var expectedBooks = dbBooks;
 
         assertThat(actualBooks)
@@ -68,21 +65,19 @@ class JpaBookRepositoryTest {
 
         assertThat(actualBooks)
                 .allMatch(book -> em.find(Book.class, book.getId()) != null);
-
-        actualBooks.forEach(System.out::println);
     }
-
 
     @DisplayName("должен сохранять новую книгу")
     @Test
     void shouldSaveNewBook() {
         var expectedBook = new Book(0, "BookTitle_10500", dbAuthors.get(0), dbGenres.get(0));
-        var returnedBook = repositoryJpa.save(expectedBook);
+        var returnedBook = repository.save(expectedBook);
+
         assertThat(returnedBook).isNotNull()
                 .matches(book -> book.getId() > 0)
                 .usingRecursiveComparison().ignoringExpectedNullFields().isEqualTo(expectedBook);
 
-        assertThat(repositoryJpa.findById(returnedBook.getId()))
+        assertThat(repository.findById(returnedBook.getId()))
                 .isPresent()
                 .get()
                 .isEqualTo(returnedBook);
@@ -93,28 +88,28 @@ class JpaBookRepositoryTest {
     void shouldSaveUpdatedBook() {
         var expectedBook = new Book(1L, "BookTitle_10500", dbAuthors.get(2), dbGenres.get(2));
 
-        assertThat(repositoryJpa.findById(expectedBook.getId()))
+        assertThat(repository.findById(expectedBook.getId()))
                 .isPresent()
                 .get()
                 .isNotEqualTo(expectedBook);
 
-        var returnedBook = repositoryJpa.save(expectedBook);
+        var returnedBook = repository.save(expectedBook);
         assertThat(returnedBook).isNotNull()
                 .matches(book -> book.getId() > 0)
                 .usingRecursiveComparison().ignoringExpectedNullFields().isEqualTo(expectedBook);
 
-        assertThat(repositoryJpa.findById(returnedBook.getId()))
+        assertThat(repository.findById(returnedBook.getId()))
                 .isPresent()
                 .get()
                 .isEqualTo(returnedBook);
     }
 
-    @DisplayName("должен удалять книгу по id ")
+    @DisplayName("должен удалять книгу по id")
     @Test
     void shouldDeleteBook() {
-        assertThat(repositoryJpa.findById(1L)).isPresent();
-        repositoryJpa.deleteById(1L);
-        assertThat(repositoryJpa.findById(1L)).isEmpty();
+        assertThat(repository.findById(1L)).isPresent();
+        repository.deleteById(1L);
+        assertThat(repository.findById(1L)).isEmpty();
     }
 
     private static List<Author> getDbAuthors() {
