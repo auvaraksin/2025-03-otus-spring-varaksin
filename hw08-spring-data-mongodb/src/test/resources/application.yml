@@ -1,0 +1,17 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    mongodb:
+      port: 0 # when flapdoodle using
+      database: test_library
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.hw.migration
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
+  enabled: true
