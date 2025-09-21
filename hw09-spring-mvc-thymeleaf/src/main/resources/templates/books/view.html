@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book Details</title>
+</head>
+<body>
+<h1 th:text="${book.title}"></h1>
+<p>Author: <span th:text="${book.author.fullName}"></span></p>
+<p>Genre: <span th:text="${book.genre.name}"></span></p>
+
+<h2>Comments</h2>
+<form th:action="@{/comments/save}" method="post">
+    <input type="hidden" name="bookId" th:value="${book.id}">
+    <textarea name="text" required></textarea>
+    <button type="submit">Add Comment</button>
+</form>
+
+<div th:each="comment : ${comments}">
+    <p th:text="${comment.text}"></p>
+    <a th:href="@{/comments/delete/{id}(id=${comment.id})}">Delete</a>
+</div>
+
+<a href="/">Back to List</a>
+</body>
+</html>

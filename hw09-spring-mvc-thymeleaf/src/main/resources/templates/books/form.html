@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${book.id == 0} ? 'Create Book' : 'Edit Book'"></title>
+</head>
+<body>
+<h1 th:text="${book.id == 0} ? 'Create Book' : 'Edit Book'"></h1>
+
+<form th:action="@{/books/save}" method="post">
+    <input type="hidden" th:field="${book.id}">
+
+    <label>Title:</label>
+    <input type="text" th:field="${book.title}" required>
+
+    <label>Author:</label>
+    <select name="authorId" required>
+        <option th:each="author : ${authors}"
+                th:value="${author.id}"
+                th:text="${author.fullName}"
+                th:selected="${book.author != null and book.author.id == author.id}">
+        </option>
+    </select>
+
+    <label>Genre:</label>
+    <select name="genreId" required>
+        <option th:each="genre : ${genres}"
+                th:value="${genre.id}"
+                th:text="${genre.name}"
+                th:selected="${book.genre != null and book.genre.id == genre.id}">
+        </option>
+    </select>
+
+    <button type="submit">Save</button>
+</form>
+
+<a href="/">Cancel</a>
+</body>
+</html>
