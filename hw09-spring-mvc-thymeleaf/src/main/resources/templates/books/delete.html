@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Delete Book</title>
+</head>
+<body>
+<h1>Delete Book</h1>
+
+<p>Are you sure you want to delete the book: <strong th:text="${book.title}"></strong>?</p>
+
+<form th:action="@{/books/delete/{id}(id=${book.id})}" method="post">
+    <button type="submit">Yes, Delete</button>
+    <a href="/">Cancel</a>
+</form>
+</body>
+</html>

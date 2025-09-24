@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Genres List</title>
+</head>
+<body>
+<h1>Genres</h1>
+<a href="/">Back to Books</a>
+
+<table>
+    <tr th:each="genre : ${genres}">
+        <td th:text="${genre.name}"></td>
+    </tr>
+</table>
+</body>
+</html>
