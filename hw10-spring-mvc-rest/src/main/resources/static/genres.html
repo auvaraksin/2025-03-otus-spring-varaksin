@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Genres List</title>
+    <style>
+        .genre-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .loading { color: #666; }
+        .error { color: red; background: #ffe6e6; padding: 10px; }
+    </style>
+</head>
+<body>
+<h1>Genres</h1>
+
+<div style="margin-bottom: 20px;">
+    <a href="/index.html">Back to Books</a>
+</div>
+
+<div id="loading" class="loading">Loading genres...</div>
+<div id="genres-list" style="display: none;"></div>
+<div id="error" class="error" style="display: none;"></div>
+
+<script src="/js/app.js"></script>
+<script>
+    function initializePage() {
+        if (typeof apiClient === 'undefined') {
+            setTimeout(initializePage, 100);
+            return;
+        }
+
+        function showElement(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.display = 'block';
+            }
+        }
+
+        function hideElement(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                showElement('error');
+            } else {
+                console.error('Error element not found:', message);
+            }
+        }
+
+        class GenrePageService {
+            constructor() {
+                this.apiClient = apiClient;
+            }
+
+            async loadGenres() {
+                try {
+                    this.showLoading();
+                    hideElement('error');
+
+                    const genres = await this.apiClient.get('/genres');
+                    this.renderGenres(genres);
+
+                    this.hideLoading();
+                    showElement('genres-list');
+                } catch (error) {
+                    this.hideLoading();
+                    showError('Error loading genres: ' + error.message);
+                }
+            }
+
+            renderGenres(genres) {
+                const container = document.getElementById('genres-list');
+                container.innerHTML = `
+                    <table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+                        <thead>
+                            <tr style="background: #f5f5f5;">
+                                <th>Genre Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${genres.map(genre => `
+                                <tr>
+                                    <td>${this.escapeHtml(genre.name)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <p>Total genres: ${genres.length}</p>
+                `;
+            }
+
+            showLoading() {
+                showElement('loading');
+                hideElement('genres-list');
+            }
+
+            hideLoading() {
+                hideElement('loading');
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        const genrePageService = new GenrePageService();
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                genrePageService.loadGenres();
+            });
+        } else {
+            genrePageService.loadGenres();
+        }
+    }
+
+    initializePage();
+</script>
+</body>
+</html>

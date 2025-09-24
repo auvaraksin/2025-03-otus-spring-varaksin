@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Books List</title>
+    <style>
+        .book-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .loading { color: #666; }
+        .error { color: red; background: #ffe6e6; padding: 10px; }
+    </style>
+    <script src="/js/app.js" defer></script>
+    <script src="/js/book-service.js" defer></script>
+</head>
+<body>
+<h1>Books</h1>
+
+<div style="margin-bottom: 20px;">
+    <a href="/book-form.html" style="margin-right: 15px;">Add New Book</a>
+    <a href="/authors.html" style="margin-right: 15px;">Authors</a>
+    <a href="/genres.html">Genres</a>
+</div>
+
+<div id="loading" class="loading">Loading books...</div>
+<div id="books-list" style="display: none;"></div>
+<div id="error" class="error" style="display: none;"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        await bookService.loadBooks();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Library</title>
+    <style>
+        .book-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .book-item h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .book-actions {
+            margin-top: 10px;
+        }
+        .book-actions a, .book-actions button {
+            margin-right: 10px;
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid #007bff;
+            background: #007bff;
+            color: white;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .book-actions button.delete {
+            background: #dc3545;
+            border-color: #dc3545;
+        }
+        .loading { color: #666; font-style: italic; }
+        .error {
+            color: #721c24;
+            background: #f8d7da;
+            padding: 10px;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+        }
+        .header-links {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+        .header-links a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+    </style>
+    <script src="/js/app.js" defer></script>
+    <script src="/js/book-service.js" defer></script>
+</head>
+<body>
+<h1>Book Library</h1>
+
+<div class="header-links">
+    <a href="/book-form.html">Add New Book</a>
+    <a href="/authors.html">Authors</a>
+    <a href="/genres.html">Genres</a>
+</div>
+
+<div id="loading" class="loading">Loading books...</div>
+<div id="books-list" style="display: none;"></div>
+<div id="error" class="error" style="display: none;"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        await bookService.loadBooks();
+    });
+</script>
+</body>
+</html>

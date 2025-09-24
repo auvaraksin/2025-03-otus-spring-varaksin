@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Authors List</title>
+    <style>
+        .author-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .loading { color: #666; }
+        .error { color: red; background: #ffe6e6; padding: 10px; }
+    </style>
+</head>
+<body>
+<h1>Authors</h1>
+
+<div style="margin-bottom: 20px;">
+    <a href="/index.html">Back to Books</a>
+</div>
+
+<div id="loading" class="loading">Loading authors...</div>
+<div id="authors-list" style="display: none;"></div>
+<div id="error" class="error" style="display: none;"></div>
+
+<script src="/js/app.js"></script>
+<script>
+    function initializePage() {
+        if (typeof apiClient === 'undefined') {
+            setTimeout(initializePage, 100);
+            return;
+        }
+
+        function showElement(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.display = 'block';
+            }
+        }
+
+        function hideElement(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                showElement('error');
+            } else {
+                console.error('Error element not found:', message);
+            }
+        }
+
+        class AuthorPageService {
+            constructor() {
+                this.apiClient = apiClient;
+            }
+
+            async loadAuthors() {
+                try {
+                    this.showLoading();
+                    hideElement('error');
+
+                    const authors = await this.apiClient.get('/authors');
+                    this.renderAuthors(authors);
+
+                    this.hideLoading();
+                    showElement('authors-list');
+                } catch (error) {
+                    this.hideLoading();
+                    showError('Error loading authors: ' + error.message);
+                }
+            }
+
+            renderAuthors(authors) {
+                const container = document.getElementById('authors-list');
+                container.innerHTML = `
+                    <table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+                        <thead>
+                            <tr style="background: #f5f5f5;">
+                                <th>Author Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${authors.map(author => `
+                                <tr>
+                                    <td>${this.escapeHtml(author.fullName)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <p>Total authors: ${authors.length}</p>
+                `;
+            }
+
+            showLoading() {
+                showElement('loading');
+                hideElement('authors-list');
+            }
+
+            hideLoading() {
+                hideElement('loading');
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        const authorPageService = new AuthorPageService();
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                authorPageService.loadAuthors();
+            });
+        } else {
+            authorPageService.loadAuthors();
+        }
+    }
+
+    initializePage();
+</script>
+</body>
+</html>
