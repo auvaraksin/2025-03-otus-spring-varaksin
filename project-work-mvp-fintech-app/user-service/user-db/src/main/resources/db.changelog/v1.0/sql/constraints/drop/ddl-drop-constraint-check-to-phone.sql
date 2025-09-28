@@ -1,0 +1,2 @@
+ALTER TABLE client
+DROP CONSTRAINT IF EXISTS validate_phone;

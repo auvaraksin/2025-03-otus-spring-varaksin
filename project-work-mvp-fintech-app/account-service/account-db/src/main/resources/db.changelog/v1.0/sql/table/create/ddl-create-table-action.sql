@@ -1,0 +1,5 @@
+CREATE TABLE action
+(
+    id INT PRIMARY KEY,
+    name ACTION_NAME NOT NULL
+);

@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-currency-type
+      author: Aleksandr Varaksin
+      changes:
+        - modifyDataType:
+            columnName: currency_code
+            newDataType: char(3)
+            tableName: currency
+        - modifyDataType:
+            columnName: currency_type
+            newDataType: char(3)
+            tableName: currency

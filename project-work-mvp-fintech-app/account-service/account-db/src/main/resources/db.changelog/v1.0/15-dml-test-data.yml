@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert_test_data
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/test-data/insert-test-data.sql
