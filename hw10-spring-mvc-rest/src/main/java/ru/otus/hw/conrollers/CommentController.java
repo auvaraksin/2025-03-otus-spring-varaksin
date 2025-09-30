@@ -20,7 +20,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @GetMapping("/comments/book/{bookId}")
+    @GetMapping("/book/{bookId}/comments")
     public ResponseEntity<List<CommentDto>> getCommentsByBook(@PathVariable long bookId) {
         return ResponseEntity.ok(commentService.findAllByBookIdDto(bookId));
     }

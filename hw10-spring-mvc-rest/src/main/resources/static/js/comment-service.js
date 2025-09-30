@@ -6,7 +6,7 @@ class CommentService {
     async loadComments(bookId) {
         try {
             console.log('Loading comments for book:', bookId);
-            const comments = await this.apiClient.get(`/comments/book/${bookId}`);
+            const comments = await this.apiClient.get(`/book/${bookId}/comments`);
             console.log('Comments received:', comments);
             this.renderComments(comments);
         } catch (error) {
