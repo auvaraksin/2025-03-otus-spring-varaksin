@@ -1,0 +1,82 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+        # Существующие маршруты для user-service
+        - id: user-service-public
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/users/public/**
+          filters:
+            - RewritePath=/api/users/public/(?<segment>.*), /public/users/$\{segment}
+
+        - id: user-service-auth
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/users/auth/**
+          filters:
+            - RewritePath=/api/users/auth/(?<segment>.*), /auth/users/$\{segment}
+            - name: JwtAuthFilter
+
+        # Новые маршруты для account-service (все требуют авторизации)
+        - id: account-service-accounts
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/accounts/auth/**
+          filters:
+            - RewritePath=/api/accounts/auth/(?<segment>.*), /auth/accounts/$\{segment}
+            - name: JwtAuthFilter
+
+        # Actuator User Service
+        - id: user-service-actuator
+          uri: http://localhost:8081
+          predicates:
+            - Path=/actuator/user-service/**
+          filters:
+            - RewritePath=/actuator/user-service/(?<segment>.*), /actuator/$\{segment}
+
+        # Actuator Gateway
+        - id: gateway-actuator
+          uri: http://localhost:8080
+          predicates:
+            - Path=/actuator/health,/actuator/info
+
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+
+# Настройки JWT (должны совпадать с user-service)
+jwt:
+  secret:
+    key: "VGhpcyBpcyBhIHZlcnkgc2VjdXJlIGFuZCBsb25nIGVuY3J5cHRpb24ga2V5IGZvciBKV1QgdG9rZW5z"
+  token:
+    header: Authorization
+    prefix: "Bearer "
+    cookie-name: accessToken
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+    enabled-by-default: true
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+
+# Настройки логирования
+logging:
+  level:
+    ru.otus.projectwork.apigateway.configuration.JwtAuthFilter: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.server: DEBUG
+    reactor.netty: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    level: "%5p [%15.15t] %-40.40c{1.} : %m%n"

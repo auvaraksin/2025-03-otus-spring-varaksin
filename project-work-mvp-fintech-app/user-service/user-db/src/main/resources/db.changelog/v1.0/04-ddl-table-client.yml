@@ -1,0 +1,130 @@
+databaseChangeLog:
+  - changeSet:
+      id: table_client
+      author: Aleksandr Varaksin
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: client
+      changes:
+        - createTable:
+            tableName: client
+            remarks: "Клиент банка/пользователь приложения"
+            columns:
+              - column:
+                  name: id
+                  remarks: "Идентификатор клиента/пользователя"
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: passport_id
+                  remarks: "Идентификатор паспорта"
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: first_name
+                  remarks: "Имя"
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  remarks: "Фамилия"
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: middle_name
+                  remarks: "Отчество"
+                  type: varchar(30)
+              - column:
+                  name: create_date
+                  remarks: "Дата регистрации"
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: update_date
+                  remarks: "Дата обновления сущности"
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: mobile_phone
+                  remarks: "Мобильный телефон"
+                  type: varchar(11)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: is_verificated
+                  remarks: "Маркер верификации пользователя"
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address_registration_id
+                  remarks: "Адрес регистрации"
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address_actual_id
+                  remarks: "Адрес проживания"
+                  type: uuid
+      rollback:
+        - dropTable:
+            tableName: client
+  - changeSet:
+      id: constraint_add_fkey_passport_id
+      author: Aleksandr Varaksin
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: passport_id
+            baseTableName: client
+            constraintName: fk_client_passport
+            referencedTableName: passport_data
+            referencedColumnNames: id
+  - changeSet:
+      id: constraint_add_fkey_address_registration
+      author: Aleksandr Varaksin
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: address_registration_id
+            baseTableName: client
+            constraintName: fk_client_address_registration
+            referencedTableName: address
+            referencedColumnNames: id
+  - changeSet:
+      id: constraint_add_fkey_address_actual
+      author: Aleksandr Varaksin
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: address_actual_id
+            baseTableName: client
+            constraintName: fk_client_address_actual
+            referencedTableName: address
+            referencedColumnNames: id
+  - changeSet:
+      id: constraint_check_phone
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/constraints/add/ddl-add-constraint-check-to-phone.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/constraints/drop/ddl-drop-constraint-check-to-phone.sql
+  - changeSet:
+      id: create_client_update_trigger
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/triggers/add/ddl-add-in-client-trigger-for-update-date.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/triggers/drop/ddl-drop-in-client-trigger-for-update-date.sql

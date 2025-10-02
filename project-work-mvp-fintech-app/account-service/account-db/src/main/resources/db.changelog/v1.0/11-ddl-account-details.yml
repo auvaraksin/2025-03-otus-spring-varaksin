@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-account-number-type
+      author: Aleksandr Varaksin
+      changes:
+        - modifyDataType:
+            columnName: account_number
+            newDataType: char(20)
+            tableName: account_details

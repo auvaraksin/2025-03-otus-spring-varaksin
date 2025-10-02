@@ -1,0 +1,32 @@
+#Version 1.0
+databaseChangeLog:
+  - include:
+      file: classpath:/db.changelog/v1.0/01-ddl-moddatetime.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/02-ddl-pgcrypto.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/03-ddl-account-details.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/04-ddl-condition.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/05-ddl-currency.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/06-ddl-account.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/07-ddl-transaction.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/08-ddl-transaction-modifyDatatype-column.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/09-ddl-account-rename-columns.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/10-ddl-currency-edit-columns.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/11-ddl-account-details.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/12-ddl-currency-change-types.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/13-ddl-transaction-story.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/14-ddl-currency-change-types.yml
+  - include:
+      file: classpath:/db.changelog/v1.0/15-dml-test-data.yml

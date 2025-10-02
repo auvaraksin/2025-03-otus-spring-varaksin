@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - property:
+      name: tableNameCondition
+      value: condition
+  - changeSet:
+      id: create_condition_enums
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/enums/add/ddl-add-condition-enums.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/enums/drop/ddl-drop-condition-enums.sql
+  - changeSet:
+      id: create_condition
+      author: Aleksandr Varaksin
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: condition
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/table/create/ddl-create-table-condition.sql
+      rollback:
+        - dropTable:
+            tableName: condition
+  - changeSet:
+      id: rename_column_payoff
+      author: Aleksandr Varaksin
+      changes:
+        - renameColumn:
+            oldColumnName: payoff
+            newColumnName: is_payoff
+            tableName: condition

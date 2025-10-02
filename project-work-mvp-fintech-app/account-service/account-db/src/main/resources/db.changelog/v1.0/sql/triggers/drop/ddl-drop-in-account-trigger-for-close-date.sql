@@ -1,0 +1,1 @@
+DROP TRIGGER IF EXISTS close_date ON account;

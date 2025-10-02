@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - property:
+      name: tableNameAccount
+      value: account
+  - changeSet:
+      id: rename_columns
+      author: Aleksandr Varaksin
+      changes:
+        - renameColumn:
+            oldColumnName: is_matter
+            newColumnName: is_master
+            tableName: account
+        - renameColumn:
+            oldColumnName: condition
+            newColumnName: conditions_id
+            tableName: account
+        - renameColumn:
+            oldColumnName: currency
+            newColumnName: currency_id
+            tableName: account

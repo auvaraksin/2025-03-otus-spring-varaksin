@@ -1,0 +1,86 @@
+databaseChangeLog:
+  - changeSet:
+      id: table_address
+      author: Aleksandr Varaksin
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: address
+      changes:
+        - createTable:
+            tableName: address
+            remarks: "Адрес клиента"
+            columns:
+              - column:
+                  name: id
+                  remarks: "Идентификатор адреса"
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: country
+                  remarks: "Страна регистрации"
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: city
+                  remarks: "Город регистрации"
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: street
+                  remarks: "Улица"
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: house
+                  remarks: "Номер дома"
+                  type: varchar(7)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: hull
+                  remarks: "Корпус"
+                  type: varchar(7)
+              - column:
+                  name: flat
+                  remarks: "Номер квартиры"
+                  type: varchar(7)
+              - column:
+                  name: post_code
+                  remarks: "Почтовый индекс"
+                  type: varchar(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: update_date
+                  remarks: "Дата обновления сущности"
+                  type: timestamp
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: address
+  - changeSet:
+      id: constraint_check_post_code
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/constraints/add/ddl-add-constraint-check-to-post-code.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/constraints/drop/ddl-drop-constraint-check-to-post-code.sql
+  - changeSet:
+      id: create_address_update_trigger
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/triggers/add/ddl-add-in-address-trigger-for-update-date.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/triggers/drop/ddl-drop-in-address-trigger-for-update-date.sql

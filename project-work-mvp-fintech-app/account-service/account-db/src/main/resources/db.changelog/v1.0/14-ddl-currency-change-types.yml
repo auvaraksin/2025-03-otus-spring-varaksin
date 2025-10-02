@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_currency_types_enums
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/enums/add/ddl-add-currency-types-enums.sql
+  - changeSet:
+      id: change-currency-type
+      author: Aleksandr Varaksin
+      changes:
+        - modifyDataType:
+            columnName: currency_code
+            newDataType: CODE
+            tableName: currency
+        - modifyDataType:
+            columnName: currency_type
+            newDataType: CURRENCY_TYPE
+            tableName: currency
+  - changeSet:
+      id: rename_currency_columns
+      author: Aleksandr Varaksin
+      changes:
+        - renameColumn:
+            oldColumnName: currency_code
+            newColumnName: code
+            tableName: currency
+        - renameColumn:
+            oldColumnName: currency_type
+            newColumnName: type
+            tableName: currency

@@ -1,0 +1,138 @@
+databaseChangeLog:
+  - changeSet:
+      id: table_user_profile
+      author: Aleksandr Varaksin
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: user_profile
+      changes:
+        - createTable:
+            tableName: user_profile
+            remarks: "Профиль клиента"
+            columns:
+              - column:
+                  name: id
+                  remarks: "Идентификатор пользовательского профиля"
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  remarks: "Идентификатор клиента/пользователя"
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  remarks: "Пароль"
+                  type: varchar(65)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_sms_enabled
+                  remarks: "SMS-уведомление"
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_push_enabled
+                  remarks: "Push-уведомление"
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  remarks: "Электронная почта"
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: create_date
+                  remarks: "Дата регистрации в приложении"
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: update_date
+                  remarks: "Дата обновления сущности"
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_email_subscription
+                  remarks: "Почтовая подписка"
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: authorization_pin
+                  remarks: "Пин-код для авторизации"
+                  type: VARCHAR(4)
+              - column:
+                  name: authorization_type
+                  remarks: "Тип авторизации"
+                  type: VARCHAR(20)
+                  defaultValue: 'LOGIN'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: profile_picture
+                  remarks: "Фото профиля"
+                  type: bytea
+      rollback:
+        - dropTable:
+            tableName: user_profile
+  - changeSet:
+      id: constraint_add_fkey_client_id
+      author: Aleksandr Varaksin
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: client_id
+            baseTableName: user_profile
+            constraintName: fk_user_profile_client
+            referencedTableName: client
+            referencedColumnNames: id
+  - changeSet:
+      id: constraint_check_email
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/constraints/add/ddl-add-constraint-check-to-email.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/constraints/drop/ddl-drop-constraint-check-to-email.sql
+  - changeSet:
+      id: constraint_check_password
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/constraints/add/ddl-add-constraint-check-to-password.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/constraints/drop/ddl-drop-constraint-check-to-password.sql
+  - changeSet:
+      id: constraint_check_authorization_pin
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/constraints/add/ddl-add-constraint-check-to-authorization-pin.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/constraints/drop/ddl-drop-constraint-check-to-authorization-pin.sql
+  - changeSet:
+      id: create_user_profile_update_trigger
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/triggers/add/ddl-add-in-user-profile-trigger-for-update-date.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/triggers/drop/ddl-drop-in-user-profile-trigger-for-update-date.sql

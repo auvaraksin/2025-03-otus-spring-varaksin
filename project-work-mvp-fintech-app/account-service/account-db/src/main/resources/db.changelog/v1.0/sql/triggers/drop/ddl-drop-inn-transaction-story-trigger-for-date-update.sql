@@ -1,0 +1,1 @@
+DROP TRIGGER IF EXISTS update_transaction_story_timestamp ON transaction_story;

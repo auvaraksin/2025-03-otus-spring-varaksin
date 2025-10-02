@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - property:
+      name: tableNameAccount
+      value: account
+  - changeSet:
+      id: create_account_enums
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/enums/add/ddl-add-account-enums.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/enums/drop/ddl-drop-account-enums.sql
+  - changeSet:
+      id: create_account
+      author: Aleksandr Varaksin
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: account
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/table/create/ddl-create-table-account.sql
+      rollback:
+        - dropTable:
+            tableName: account
+  - changeSet:
+      id: create-in-account-trigger-for-update-date
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/triggers/add/ddl-add-in-account-trigger-for-update-date.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/triggers/drop/ddl-drop-in-account-trigger-for-update-date.sql
+  - changeSet:
+      id: create-in-account-trigger-for-close-date
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/triggers/add/ddl-add-in-account-trigger-for-close-date.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/triggers/drop/ddl-drop-in-account-trigger-for-close-date.sql
