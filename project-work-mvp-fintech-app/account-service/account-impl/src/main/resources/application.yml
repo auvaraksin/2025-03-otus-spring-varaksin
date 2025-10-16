@@ -1,0 +1,102 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: account-service
+
+  config:
+    import: "optional:configserver:"
+  cloud:
+    config:
+      enabled: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/account_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 5
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db.changelog/db.changelog-master.yml
+
+  sql:
+    init:
+      mode: never
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    ru.otus.projectwork.user.configuration.filter.JwtTokenFilter: DEBUG
+    ru.otus.projectwork.user.util.token.JwtTokenUtils: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: DEBUG
+    ru.otus.projectwork: DEBUG
+
+default-account-data:
+  bikBank: 044525970
+  bankName: Otus-MVP-Bank
+  innBank: 7702070117
+  corAccountBank: 30101810400000000970
+  kppBank: 784253001
+  okpoBank: 00032538
+  ogrnBank: 1025600132195
+  swiftCode: 'OTUS RU MM ХХХ'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /actuator
+    enabled-by-default: true
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+      show-components: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    info:
+      enabled: true
+    env:
+      enabled: true
+    beans:
+      enabled: true
+    conditions:
+      enabled: true
+    configprops:
+      enabled: true
+    loggers:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  health:
+    db:
+      enabled: true
+    redis:
+      enabled: true
+    diskspace:
+      enabled: true
+    ping:
+      enabled: true

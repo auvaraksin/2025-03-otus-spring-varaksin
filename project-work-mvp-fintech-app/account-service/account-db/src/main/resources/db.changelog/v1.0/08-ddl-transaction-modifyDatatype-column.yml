@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - property:
+      name: tableNameTransaction
+      value: transaction
+  - changeSet:
+      id: modifyDataType_transaction_column
+      author: Aleksandr Varaksin
+      changes:
+        - modifyDataType:
+            tableName: transaction
+            columnName: location
+            newDataType: varchar(50)
+        - modifyDataType:
+            tableName: transaction
+            columnName: from_account
+            newDataType: varchar(16)
+        - modifyDataType:
+            tableName: transaction
+            columnName: to_account
+            newDataType: varchar(16)

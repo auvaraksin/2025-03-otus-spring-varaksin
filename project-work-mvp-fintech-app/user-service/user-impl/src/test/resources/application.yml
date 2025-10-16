@@ -1,0 +1,121 @@
+spring:
+  application:
+    name: user-service-test
+
+  # Полное отключение Spring Cloud Config
+  cloud:
+    config:
+      enabled: false
+      import-check:
+        enabled: false
+
+  # Упрощенные настройки безопасности для тестов
+  security:
+    password-encoder:
+      strength: 8  # Уменьшено для скорости тестов
+      version: $2A
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/user_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 1000
+      maximum-pool-size: 3
+
+  # Настройки JPA для тестов
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Автоматическое создание/удаление схемы
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  # Отключение Liquibase в тестах
+  liquibase:
+    enabled: true
+    change-log: classpath:/db.changelog/db.changelog-master.yml
+
+  # Конфигурация Redis для тестов
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 1000ms # Уменьшено для тестов
+      key:
+        expiry:
+          otp_ttl: 60  # Уменьшено для тестов
+          max_attempts_to_check_otp: 3
+
+  sql:
+    init:
+      mode: never
+
+# Упрощенная JWT конфигурация для тестов
+jwt:
+  secret:
+    key: "VGVzdCBKV1Qgc2VjcmV0IGtleSBmb3IgdGVzdGluZyBwdXJwb3NlcyBvbmx5"
+  cookies:
+    name: accessToken
+  time:
+    refresh: 1h  # Уменьшено для тестов
+    access: 10m
+
+# Минимальная конфигурация мониторинга для тестов
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+    enabled-by-default: true
+
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+      show-components: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    info:
+      enabled: true
+    # Отключены для скорости тестов
+    env:
+      enabled: false
+    beans:
+      enabled: false
+    conditions:
+      enabled: false
+    configprops:
+      enabled: false
+    loggers:
+      enabled: false
+
+  health:
+    db:
+      enabled: true
+    redis:
+      enabled: true
+    diskspace:
+      enabled: true
+    ping:
+      enabled: true
+
+# Логирование для отладки тестов
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: DEBUG
+    ru.otus.projectwork: DEBUG
+    org.springframework.jdbc.core: DEBUG
+    liquibase: INFO
+
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"

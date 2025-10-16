@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - property:
+      name: tableNameTransaction
+      value: transaction
+  - changeSet:
+      id: create_transaction_enums
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/enums/add/ddl-add-transaction-enums.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/enums/drop/ddl-drop-transaction-enums.sql
+  - changeSet:
+      id: create_transaction
+      author: Aleksandr Varaksin
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: transaction
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/table/create/ddl-create-table-transaction.sql
+      rollback:
+        - dropTable:
+            tableName: transaction
+  - changeSet:
+      id: create-in-transaction-trigger-for-update-date
+      author: Aleksandr Varaksin
+      changes:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/triggers/add/ddl-add-in-transaction-trigger-for-update-date.sql
+      rollback:
+        - sqlFile:
+            path: classpath:/db.changelog/v1.0/sql/triggers/drop/ddl-drop-in-transaction-trigger-for-update-date.sql

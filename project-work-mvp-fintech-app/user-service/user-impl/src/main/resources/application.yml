@@ -1,0 +1,115 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: user-service
+
+  config:
+    import: "optional:configserver:"
+  cloud:
+    config:
+      enabled: false
+
+  security:
+    password-encoder:
+      strength: 15
+      version: $2A
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/user_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 5
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db.changelog/db.changelog-master.yml
+  data:
+    redis:
+      port: 6379
+      timeout: 2000ms
+      host: localhost
+      key:
+        expiry:
+          otp_ttl: 120
+          max_attempts_to_check_otp: 3
+
+  sql:
+    init:
+      mode: never
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    ru.otus.projectwork.user.configuration.filter.JwtTokenFilter: DEBUG
+    ru.otus.projectwork.user.util.token.JwtTokenUtils: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: DEBUG
+    ru.otus.projectwork: DEBUG
+
+jwt:
+  secret:
+    key: "VGhpcyBpcyBhIHZlcnkgc2VjdXJlIGFuZCBsb25nIGVuY3J5cHRpb24ga2V5IGZvciBKV1QgdG9rZW5z"
+  cookies:
+    name: accessToken
+  time:
+    refresh: 1d
+    access: 30m
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /actuator
+    enabled-by-default: true
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+      show-components: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    info:
+      enabled: true
+    env:
+      enabled: true
+    beans:
+      enabled: true
+    conditions:
+      enabled: true
+    configprops:
+      enabled: true
+    loggers:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  health:
+    db:
+      enabled: true
+    redis:
+      enabled: true
+    diskspace:
+      enabled: true
+    ping:
+      enabled: true
